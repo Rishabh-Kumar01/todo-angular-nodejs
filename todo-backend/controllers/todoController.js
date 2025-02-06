@@ -19,7 +19,7 @@ export const getTodos = async (req, res) => {
 
 export const addTodo = async (req, res) => {
   try {
-    const todo = await todoService.createTodo(req.body);
+    const todo = await todoService.createTodo(req.user._id, req.body);
     res.status(201).json({
       success: true,
       message: "Todo created successfully",
@@ -36,7 +36,11 @@ export const addTodo = async (req, res) => {
 
 export const updateTodo = async (req, res) => {
   try {
-    const todo = await todoService.updateTodo(req.params.id, req.body);
+    const todo = await todoService.updateTodo(
+      req.params.id,
+      req.user._id,
+      req.body
+    );
     res.json({
       success: true,
       message: "Todo updated successfully",
@@ -53,7 +57,7 @@ export const updateTodo = async (req, res) => {
 
 export const deleteTodo = async (req, res) => {
   try {
-    await todoService.deleteTodo(req.params.id);
+    await todoService.deleteTodo(req.params.id, req.user._id);
     res.status(200).json({
       success: true,
       message: "Todo deleted successfully",
