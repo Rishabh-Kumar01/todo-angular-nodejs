@@ -23,6 +23,14 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: "Authentication failed",
+        error: "Account is inactive",
+      });
+    }
+
     req.user = user;
     next();
   } catch (error) {

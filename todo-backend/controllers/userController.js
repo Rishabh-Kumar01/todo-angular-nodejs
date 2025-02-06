@@ -33,3 +33,56 @@ export const login = async (req, res) => {
     });
   }
 };
+
+export const listNonSuperUsers = async (req, res) => {
+  try {
+    const users = await userService.getNonSuperUsers();
+    res.json({
+      success: true,
+      message: "Users fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
+      error: error.message,
+    });
+  }
+};
+
+export const toggleUserActiveStatus = async (req, res) => {
+  try {
+    const updatedUser = await userService.toggleUserActive(
+      req.params.userId,
+      req.user
+    );
+    res.json({
+      success: true,
+      message: "User status updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to update user status",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteUserById = async (req, res) => {
+  try {
+    await userService.deleteUser(req.params.userId, req.user);
+    res.json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to delete user",
+      error: error.message,
+    });
+  }
+};

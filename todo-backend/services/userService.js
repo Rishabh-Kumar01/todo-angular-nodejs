@@ -31,3 +31,60 @@ export const loginUser = async ({ username, password }) => {
   const token = generateToken(user._id);
   return { token };
 };
+
+export const getNonSuperUsers = async () => {
+  try {
+    // Find all non-superusers, excluding password field
+    const users = await User.find({ isSuperUser: false }, { password: 0 }).sort(
+      { createdAt: -1 }
+    );
+    return users;
+  } catch (error) {
+    throw new Error("Error fetching users");
+  }
+};
+
+export const toggleUserActive = async (userId, currentUser) => {
+  try {
+    // Check if target user exists
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      throw new Error("User not found");
+    }
+
+    // Prevent modifying other superusers
+    if (targetUser.isSuperUser) {
+      throw new Error("Cannot modify superuser status");
+    }
+
+    // Toggle isActive status
+    targetUser.isActive = !targetUser.isActive;
+    await targetUser.save();
+
+    // Return user without password
+    const { password, ...userWithoutPassword } = targetUser.toObject();
+    return userWithoutPassword;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const deleteUser = async (userId, currentUser) => {
+  try {
+    // Check if target user exists
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      throw new Error("User not found");
+    }
+
+    // Prevent deleting superusers
+    if (targetUser.isSuperUser) {
+      throw new Error("Cannot delete superuser");
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
