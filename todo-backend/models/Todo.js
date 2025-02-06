@@ -19,6 +19,13 @@ const todoSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    versionKey: false,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.userId;
+        return ret;
+      },
+    },
   }
 );
 
