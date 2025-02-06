@@ -6,8 +6,8 @@ import { Todo } from '../models/todo.model';
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
-  data?: T; // Present for add/update/get calls
-  error?: string; // Present for error responses
+  data?: T;
+  error?: string;
 }
 
 @Injectable({
@@ -18,22 +18,35 @@ export class TodoService {
 
   constructor(private http: HttpClient) {}
 
+  // Helper method to get the Authorization header
+  private getAuthHeaders(): { [header: string]: string } {
+    const token = localStorage.getItem('token');
+    return { Authorization: `Bearer ${token}` };
+  }
+
   getTodos(): Observable<ApiResponse<Todo[]>> {
-    return this.http.get<ApiResponse<Todo[]>>(this.baseUrl);
+    const headers = this.getAuthHeaders();
+    return this.http.get<ApiResponse<Todo[]>>(this.baseUrl, { headers });
   }
 
   addTodo(todo: Partial<Todo>): Observable<ApiResponse<Todo>> {
-    return this.http.post<ApiResponse<Todo>>(this.baseUrl, todo);
+    const headers = this.getAuthHeaders();
+    return this.http.post<ApiResponse<Todo>>(this.baseUrl, todo, { headers });
   }
 
   updateTodo(todo: Todo): Observable<ApiResponse<Todo>> {
+    const headers = this.getAuthHeaders();
     return this.http.patch<ApiResponse<Todo>>(
       `${this.baseUrl}/${todo._id}`,
-      todo
+      todo,
+      { headers }
     );
   }
 
   deleteTodo(todoId: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.baseUrl}/${todoId}`);
+    const headers = this.getAuthHeaders();
+    return this.http.delete<ApiResponse<null>>(`${this.baseUrl}/${todoId}`, {
+      headers,
+    });
   }
 }
