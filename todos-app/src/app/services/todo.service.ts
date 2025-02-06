@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Todo } from '../models/todo.model';
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T; // Present for add/update/get calls
+  error?: string; // Present for error responses
+}
 
 @Injectable({
   providedIn: 'root',
@@ -12,27 +18,22 @@ export class TodoService {
 
   constructor(private http: HttpClient) {}
 
-  getTodos(): Observable<Todo[]> {
-    const todos = this.http
-      .get<{ success: boolean; message: string; data: Todo[] }>(this.baseUrl)
-      .pipe(map((response) => response.data));
-    console.log('todos', todos);
-    return todos;
+  getTodos(): Observable<ApiResponse<Todo[]>> {
+    return this.http.get<ApiResponse<Todo[]>>(this.baseUrl);
   }
 
-  addTodo(todo: Partial<Todo>): Observable<Todo> {
-    return this.http
-      .post<{ data: Todo }>(this.baseUrl, todo)
-      .pipe(map((response) => response.data));
+  addTodo(todo: Partial<Todo>): Observable<ApiResponse<Todo>> {
+    return this.http.post<ApiResponse<Todo>>(this.baseUrl, todo);
   }
 
-  updateTodo(todo: Todo): Observable<Todo> {
-    return this.http
-      .patch<{ data: Todo }>(`${this.baseUrl}/${todo._id}`, todo)
-      .pipe(map((response) => response.data));
+  updateTodo(todo: Todo): Observable<ApiResponse<Todo>> {
+    return this.http.patch<ApiResponse<Todo>>(
+      `${this.baseUrl}/${todo._id}`,
+      todo
+    );
   }
 
-  deleteTodo(todoId: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${todoId}`);
+  deleteTodo(todoId: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.baseUrl}/${todoId}`);
   }
 }

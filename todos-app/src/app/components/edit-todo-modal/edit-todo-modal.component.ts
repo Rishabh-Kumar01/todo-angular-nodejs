@@ -5,6 +5,7 @@ import { Todo } from '../../models/todo.model';
 import { TodoService } from '../../services/todo.service';
 import { TodoStoreService } from '../../store/todo-store.service';
 import { TODO_DATA, CLOSE_FN } from '../../utils/modal-injector';
+import { ToastService } from '../../services/toast.service.js';
 
 @Component({
   selector: 'app-edit-todo-modal',
@@ -29,7 +30,8 @@ export class EditTodoModalComponent implements OnInit {
     @Inject(TODO_DATA) public todo: Todo,
     @Inject(CLOSE_FN) public closeFn: () => void,
     private todoService: TodoService,
-    private todoStore: TodoStoreService
+    private todoStore: TodoStoreService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -38,10 +40,17 @@ export class EditTodoModalComponent implements OnInit {
 
   update(): void {
     const updatedTodo = { ...this.todo, title: this.title };
-    this.todoService.updateTodo(updatedTodo).subscribe((updated) => {
-      // Update the global store so all components show the new title.
-      this.todoStore.updateTodo(updated);
-      this.close();
+    this.todoService.updateTodo(updatedTodo).subscribe({
+      next: (res) => {
+        this.todoStore.updateTodo(res.data!);
+        const message = res.message?.trim() || 'Todo updated successfully';
+        this.toastService.showSuccess(message);
+        this.close();
+      },
+      error: (err) => {
+        const errorMsg = err.error.message?.trim() || 'Failed to update todo';
+        this.toastService.showError(errorMsg);
+      },
     });
   }
 

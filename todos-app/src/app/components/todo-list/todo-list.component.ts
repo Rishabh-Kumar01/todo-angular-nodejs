@@ -4,6 +4,7 @@ import { TodoStoreService } from '../../store/todo-store.service.js';
 import { TodoService } from '../../services/todo.service.js';
 import { TodoItemComponent } from '../todo-item/todo-item.component.js';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../services/toast.service.js';
 
 @Component({
   selector: 'app-todo-list',
@@ -16,29 +17,51 @@ export class TodoListComponent implements OnInit {
 
   constructor(
     private todoStore: TodoStoreService,
-    private todoService: TodoService
+    private todoService: TodoService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to the global store for real-time updates.
     this.todoStore.todos$.subscribe((todos) => (this.todos = todos));
-    // Initial load of todos from the backend.
-    this.todoService.getTodos().subscribe((data) => {
-      this.todoStore.setTodos(data);
+    this.todoService.getTodos().subscribe({
+      next: (res) => {
+        this.todoStore.setTodos(res.data!);
+        const message = res.message?.trim() || 'Todos fetched successfully';
+        this.toastService.showSuccess(message);
+      },
+      error: (err) => {
+        const errorMsg = err.error.message?.trim() || 'Failed to fetch todos';
+        this.toastService.showError(errorMsg);
+      },
     });
   }
 
   onToggle(updatedTodo: Todo): void {
-    // Update todo in the backend then update the global store.
-    this.todoService.updateTodo(updatedTodo).subscribe((todo) => {
-      this.todoStore.updateTodo(todo);
+    this.todoService.updateTodo(updatedTodo).subscribe({
+      next: (res) => {
+        this.todoStore.updateTodo(res.data!);
+        const message = res.message?.trim() || 'Todo updated successfully';
+        this.toastService.showSuccess(message);
+      },
+      error: (err) => {
+        const errorMsg = err.error.message?.trim() || 'Failed to update todo';
+        this.toastService.showError(errorMsg);
+      },
     });
   }
 
   onDelete(todoId: string): void {
-    // Delete todo from backend then update the global store.
-    this.todoService.deleteTodo(todoId).subscribe(() => {
-      this.todoStore.removeTodo(todoId);
+    this.todoService.deleteTodo(todoId).subscribe({
+      next: (res) => {
+        this.todoStore.removeTodo(todoId);
+        // For delete, the response only contains success and message.
+        const message = res.message?.trim() || 'Todo deleted successfully';
+        this.toastService.showSuccess(message);
+      },
+      error: (err) => {
+        const errorMsg = err.error.message?.trim() || 'Failed to delete todo';
+        this.toastService.showError(errorMsg);
+      },
     });
   }
 }
