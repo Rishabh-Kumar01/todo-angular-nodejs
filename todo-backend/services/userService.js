@@ -46,6 +46,10 @@ export const getNonSuperUsers = async () => {
 
 export const toggleUserActive = async (userId, currentUser) => {
   try {
+    if (userId === currentUser._id) {
+      throw new Error("Cannot deactivate yourself");
+    }
+
     // Check if target user exists
     const targetUser = await User.findById(userId);
     if (!targetUser) {
@@ -71,6 +75,10 @@ export const toggleUserActive = async (userId, currentUser) => {
 
 export const deleteUser = async (userId, currentUser) => {
   try {
+    if (userId === currentUser._id) {
+      throw new Error("Cannot delete own account");
+    }
+
     // Check if target user exists
     const targetUser = await User.findById(userId);
     if (!targetUser) {

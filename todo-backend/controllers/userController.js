@@ -59,7 +59,9 @@ export const toggleUserActiveStatus = async (req, res) => {
     );
     res.json({
       success: true,
-      message: "User status updated successfully",
+      message: updatedUser.isActive
+        ? "User activated successfully"
+        : "User deactivated successfully",
       data: updatedUser,
     });
   } catch (error) {
