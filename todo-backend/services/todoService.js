@@ -1,11 +1,11 @@
-import * as todoRepository from '../repositories/todoRepository.js';
+import * as todoRepository from "../repositories/todoRepository.js";
 
 export const getTodos = async () => {
   return await todoRepository.findAll();
 };
 
-export const createTodo = async (todoData) => {
-  return await todoRepository.create(todoData);
+export const createTodo = async (userId, todoData) => {
+  return await todoRepository.create({ ...todoData, userId });
 };
 
 export const updateTodo = async (id, todoData) => {
