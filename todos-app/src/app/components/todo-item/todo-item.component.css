@@ -1,0 +1,16 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.todo-item span {
+  color: rgb(15, 12, 12)
+}
+
+.todo-item.completed span {
+  text-decoration: line-through;
+  color: grey;
+}

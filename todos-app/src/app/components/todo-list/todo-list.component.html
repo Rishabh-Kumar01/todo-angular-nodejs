@@ -1,0 +1,12 @@
+<div *ngIf="todos.length > 0; else noTodos">
+  <app-todo-item
+    *ngFor="let todo of todos"
+    [todo]="todo"
+    (toggle)="onToggle($event)"
+    (delete)="onDelete($event)"
+  >
+  </app-todo-item>
+</div>
+<ng-template #noTodos>
+  <p>No todos available.</p>
+</ng-template>
