@@ -4,6 +4,6 @@
     [checked]="todo.completed"
     (change)="toggleCompleted()"
   />
-  <span>{{ todo.title }}</span>
+  <span (click)="openEditModal()">{{ todo.title }}</span>
   <button (click)="deleteTodo()">Delete</button>
 </div>
