@@ -1,0 +1,50 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+h2 {
+  color: rgb(0, 0, 0);
+}
+
+form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+p {
+  margin-top: 1rem;
+  color: rgb(44, 35, 35);
+}
+
+p a {
+  cursor: pointer;
+  color: rgb(12, 10, 10);
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}

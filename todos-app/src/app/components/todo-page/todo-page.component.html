@@ -1,3 +1,7 @@
+<div class="header" *ngIf="auth$ | async as auth">
+  <span *ngIf="auth.username"> Welcome, {{ auth.username }} </span>
+  <button (click)="logout()">Logout</button>
+</div>
 <div class="todo-page">
   <h1>Angular Todo App</h1>
   <app-todo-form></app-todo-form>
