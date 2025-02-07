@@ -13,30 +13,41 @@ export interface User {
   _id: string;
   username: string;
   isActive: boolean;
-  // additional fields if needed
+}
+
+export interface Pagination {
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class SuperUserService {
-  // Adjust the baseUrl to match your backend route for super user endpoints.
+  // Ensure this URL matches your backend routes
   private baseUrl = 'http://localhost:3000/users';
 
   constructor(private http: HttpClient) {}
 
-  // Helper method to get the Authorization header.
   private getAuthHeaders(): { [header: string]: string } {
     const token = localStorage.getItem('token');
     return { Authorization: `Bearer ${token}` };
   }
 
-  getNonSuperUsers(): Observable<ApiResponse<User[]>> {
+  // Accepts page and limit query parameters
+  getNonSuperUsers(
+    page: number = 1,
+    limit: number = 10
+  ): Observable<ApiResponse<{ users: User[]; pagination: Pagination }>> {
     const headers = this.getAuthHeaders();
-    return this.http.get<ApiResponse<User[]>>(
-      `${this.baseUrl}/non-super-users`,
-      { headers }
-    );
+    const url = `${this.baseUrl}/non-super-users?page=${page}&limit=${limit}`;
+    return this.http.get<
+      ApiResponse<{ users: User[]; pagination: Pagination }>
+    >(url, { headers });
   }
 
   toggleUserActiveStatus(userId: string): Observable<ApiResponse<User>> {
