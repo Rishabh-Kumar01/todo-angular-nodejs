@@ -14,7 +14,7 @@ export const createUser = async (userData) => {
   const user = await User.create(userData);
   const token = generateToken(user._id);
 
-  return { token };
+  return { token, isSuperUser: user.isSuperUser };
 };
 
 export const loginUser = async ({ username, password }) => {

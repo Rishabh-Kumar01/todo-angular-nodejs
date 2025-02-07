@@ -51,8 +51,14 @@ export class LoginComponent {
           const message = res.message?.trim() || 'Login successful';
           this.toastService.showSuccess(message);
           if (res.success && res.data) {
-            this.authStore.setAuth(res.data.token, this.username);
-            this.router.navigate(['/todos']);
+            // Now res.data has both token and isSuperUser.
+            const { token, isSuperUser } = res.data;
+            this.authStore.setAuth(token, this.username, isSuperUser);
+            if (isSuperUser) {
+              this.router.navigate(['/manage-users']);
+            } else {
+              this.router.navigate(['/todos']);
+            }
           }
         },
         error: (err) => {

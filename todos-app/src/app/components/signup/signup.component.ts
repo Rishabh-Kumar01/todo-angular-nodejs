@@ -51,8 +51,14 @@ export class SignupComponent {
           const message = res.message?.trim() || 'Signup successful';
           this.toastService.showSuccess(message);
           if (res.success && res.data) {
-            this.authStore.setAuth(res.data.token, this.username);
-            this.router.navigate(['/todos']);
+            const { token, isSuperUser } = res.data; // Destructure the response data.
+            this.authStore.setAuth(token, this.username, isSuperUser);
+            // Navigate to the appropriate page based on isSuperUser flag.
+            if (isSuperUser) {
+              this.router.navigate(['/manage-users']);
+            } else {
+              this.router.navigate(['/todos']);
+            }
           }
         },
         error: (err) => {

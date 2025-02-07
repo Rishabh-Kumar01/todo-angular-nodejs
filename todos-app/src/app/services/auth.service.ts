@@ -9,11 +9,17 @@ export interface ApiResponse<T = any> {
   error?: string;
 }
 
+// Create an interface to reflect the login response data.
+export interface LoginResponseData {
+  token: string;
+  isSuperUser: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // Adjust the baseUrl according to your backend configuration.
+  // Adjust the baseUrl according to your backend.
   private baseUrl = 'http://localhost:3000/users';
 
   constructor(private http: HttpClient) {}
@@ -21,18 +27,19 @@ export class AuthService {
   signup(credentials: {
     username: string;
     password: string;
-  }): Observable<ApiResponse<{ token: string }>> {
-    return this.http.post<ApiResponse<{ token: string }>>(
+  }): Observable<ApiResponse<LoginResponseData>> {
+    return this.http.post<ApiResponse<LoginResponseData>>(
       `${this.baseUrl}/signup`,
       credentials
     );
   }
 
+  // Update the login method to use the LoginResponseData interface.
   login(credentials: {
     username: string;
     password: string;
-  }): Observable<ApiResponse<{ token: string }>> {
-    return this.http.post<ApiResponse<{ token: string }>>(
+  }): Observable<ApiResponse<LoginResponseData>> {
+    return this.http.post<ApiResponse<LoginResponseData>>(
       `${this.baseUrl}/login`,
       credentials
     );
