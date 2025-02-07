@@ -32,14 +32,31 @@ export const loginUser = async ({ username, password }) => {
   return { token, isSuperUser: user.isSuperUser };
 };
 
-export const getNonSuperUsers = async () => {
+export const getNonSuperUsers = async (page = 1, limit = 10) => {
   try {
-    // Find all non-superusers, excluding password field
-    const users = await User.find(
-      { isSuperUser: false },
-      { password: 0, isSuperUser: 0 }
-    ).sort({ createdAt: -1 });
-    return users;
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      User.find({ isSuperUser: false }, { password: 0 })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      User.countDocuments({ isSuperUser: false }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      users,
+      pagination: {
+        total,
+        totalPages,
+        currentPage: page,
+        limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    };
   } catch (error) {
     throw new Error("Error fetching users");
   }

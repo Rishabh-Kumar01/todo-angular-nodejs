@@ -36,17 +36,32 @@ export const login = async (req, res) => {
 
 export const listNonSuperUsers = async (req, res) => {
   try {
-    const users = await userService.getNonSuperUsers();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid pagination parameters',
+        error: 'Page and limit must be positive numbers'
+      });
+    }
+
+    const { users, pagination } = await userService.getNonSuperUsers(page, limit);
+    
     res.json({
       success: true,
-      message: "Users fetched successfully",
-      data: users,
+      message: 'Users fetched successfully',
+      data: {
+        users,
+        pagination
+      }
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to fetch users",
-      error: error.message,
+      message: 'Failed to fetch users',
+      error: error.message
     });
   }
 };
