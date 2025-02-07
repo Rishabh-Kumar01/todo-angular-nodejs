@@ -2,11 +2,11 @@ import * as userService from "../services/userService.js";
 
 export const signup = async (req, res) => {
   try {
-    const user = await userService.createUser(req.body);
+    const data = await userService.createUser(req.body);
     res.status(201).json({
       success: true,
       message: "User created successfully",
-      data: { token: user.token },
+      data,
     });
   } catch (error) {
     res.status(400).json({
