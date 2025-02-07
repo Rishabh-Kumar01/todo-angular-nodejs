@@ -29,15 +29,16 @@ export const loginUser = async ({ username, password }) => {
   }
 
   const token = generateToken(user._id);
-  return { token };
+  return { token, isSuperUser: user.isSuperUser };
 };
 
 export const getNonSuperUsers = async () => {
   try {
     // Find all non-superusers, excluding password field
-    const users = await User.find({ isSuperUser: false }, { password: 0 }).sort(
-      { createdAt: -1 }
-    );
+    const users = await User.find(
+      { isSuperUser: false },
+      { password: 0, isSuperUser: 0 }
+    ).sort({ createdAt: -1 });
     return users;
   } catch (error) {
     throw new Error("Error fetching users");
